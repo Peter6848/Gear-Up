@@ -15,12 +15,12 @@
  */
 
 .site-header {
-  background-color: rgba(0, 0, 0, .85);
+  background-color: #db1818;
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
 }
 .site-header a {
-  color: #999;
+  color: white;
   transition: ease-in-out color .15s;
 }
 .site-header a:hover {
@@ -87,3 +87,9 @@
 }
 
 .overflow-hidden { overflow: hidden; }
+
+.pinterest-login {
+  color: white;
+  background-color: #db1818;
+  border: none;
+}
