@@ -2,10 +2,28 @@
 // All this logic will automatically be available in application.js.
 $(document).ready(function(){
   pinterestLogin();
+  pinsHoverListener();
 })
 
+var pinsHoverListener = function() {
+  $('.my-3').on('click', function(){
+    var clicked = $(this).closest('.board-items');
+    var board_opacity = $('.board-items').css('opacity');
+    console.log(board_opacity)
+
+    if($(clicked).hasClass('clicked')){
+      $('.board-items').fadeIn();
+      $(clicked).removeClass('clicked');
+    } else {
+      $(clicked).addClass('clicked');
+      $('.board-items').fadeOut();
+      $('.clicked').fadeIn();
+    }
+  });
+}
+
 var pinterestLogin = function(){
-  $('.login-button').click(pintrest)
+  $('.pinterest-login').click(pintrest)
 }
 
 function pintrest(){
@@ -34,8 +52,8 @@ function pintrest(){
                     // console.log(PDK.getSession().accessToken);
 
                     var yahoo = $( "#result" ).load( "https://api.pinterest.com/v1/me/?access_token="+PDK.getSession().accessToken+"&fields=counts" );
-                    
 
+                    console.log(yahoo['data'])
                     // var board = yahoo['counts']['boards'];
                     // $('.board').append(board);
                     // PDK.logout();
