@@ -2,14 +2,13 @@
 // All this logic will automatically be available in application.js.
 $(document).ready(function(){
   pinterestLogin();
-  pinsHoverListener();
+  boardsListener();
 })
 
-var pinsHoverListener = function() {
-  $('.my-3').on('click', function(){
+var boardsListener = function() {
+  $('.my-md-3').on('click', '.board-items', function(){
     var clicked = $(this).closest('.board-items');
     var board_opacity = $('.board-items').css('opacity');
-    console.log(board_opacity)
 
     if($(clicked).hasClass('clicked')){
       $('.board-items').fadeIn();
@@ -40,12 +39,42 @@ function pintrest(){
              //console.log(JSON.stringify(response));
           }
       //get board info
-
-      var pins = [];
-      console.log("Response:", response);
-
       PDK.me("pins", function(response){
-        console.log("pdk.me:", response)
+        console.log("pdk.me pins:", response)
+
+      })
+
+      PDK.request('/v1/me/', function (response) {
+        if (!response || response.error) {
+          alert('Error occured');
+        } else {
+          var total = 0;
+          var totalPrices = "";
+
+          $.ajax({
+            url: "https://api.pinterest.com/v1/me/pins/?access_token="+PDK.getSession().accessToken+"&fields=id,link,board,image,metadata"
+          }).done(function(response){
+
+            response.data.forEach(function(pin){
+              // console.log(pin);
+              try {
+                if(pin.metadata.product.offer.price) {
+                  var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
+                  // console.log(price);
+                  total += price
+
+                }
+              }
+              catch(err) {
+
+              }
+            })
+            console.log(total);
+            totalPrices = "<div class='total-prices'>$" + total + "</div>"
+            $('.m-md-3').append(totalPrices);
+          })
+
+        }
       })
       PDK.request('/v1/me/', function (response) {
         if (!response || response.error) {
@@ -64,21 +93,28 @@ function pintrest(){
               var url = board.url;
               var description = board.description;
               var image = board.image["60x60"].url;
-              console.log(id);
-              console.log(name);
-              console.log(url);
-              console.log(description);
-              console.log(image);
-              var boardItem = boardItem + "<div class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
+              var boardItemzz = "";
+              // console.log(id);
+              // console.log(name);
+              // console.log(url);
+              // console.log(description);
+              // console.log(image);
+              boardItem = "<div class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
                                           + "<div class='my-3 p-3'>"
                                             + "<h2 class='display-5'>" + name + "</h2>"
                                             + "<p class='lead'>" + description + "</p>"
                                           + "</div>"
                                           + "<div class='image-div' style='width: 80%; height: 300px; border-radius: 21px 21px 0 0;'>"
-                                            + "<img class='board-image' src='" + image + "'/>"
+                                            // + "<img class='board-image' src='" + image + "'/>"
+                                               // <a data-pin-do="embedBoard" data-pin-board-width="400" data-pin-scale-height="240" data-pin-scale-width="80" href="https://www.pinterest.com/petert0661/fly-fishing/"></a>
+                                            + "<a data-pin-do='embedBoard' data-pin-board-width='400' data-pin-scale-height='240' data-pin-scale-width='80' href='" + url + "'></a>"
                                           + "</div>"
                                         + "</div>";
+
+              boardItemzz = "<a data-pin-do='embedBoard' data-pin-board-width='400' data-pin-scale-height='240' data-pin-scale-width='80' href='" + url + "'></a>"
+
               $('.my-md-3').append(boardItem);
+              $('#result').append(boardItemzz);
               // <div class="bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers">
               //   <div class="my-3 p-3">
               //     <h2 class="display-5">Another headline</h2>
