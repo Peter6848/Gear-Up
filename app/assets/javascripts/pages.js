@@ -62,11 +62,10 @@ function pintrest(){
                   var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
                   // console.log(price);
                   total += price
-
                 }
               }
               catch(err) {
-
+                // alert(err);
               }
             })
             console.log(total);
@@ -105,7 +104,7 @@ function pintrest(){
                                             + "<p class='lead'>" + description + "</p>"
                                           + "</div>"
                                           + "<div class='image-div' style='width: 80%; height: 300px; border-radius: 21px 21px 0 0;'>"
-                                            // + "<img class='board-image' src='" + image + "'/>"
+                                            + "<img class='board-image' src='" + image + "'/>"
                                                // <a data-pin-do="embedBoard" data-pin-board-width="400" data-pin-scale-height="240" data-pin-scale-width="80" href="https://www.pinterest.com/petert0661/fly-fishing/"></a>
                                             + "<a data-pin-do='embedBoard' data-pin-board-width='400' data-pin-scale-height='240' data-pin-scale-width='80' href='" + url + "'></a>"
                                           + "</div>"
@@ -115,24 +114,15 @@ function pintrest(){
 
               $('.my-md-3').append(boardItem);
               $('#result').append(boardItemzz);
-              // <div class="bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers">
-              //   <div class="my-3 p-3">
-              //     <h2 class="display-5">Another headline</h2>
-              //     <p class="lead">And an even wittier subheading.</p>
-              //   </div>
-              //   <div class="image-div" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-              // </div>
             })
-            console.log(response.data)
-            // $('.image-div').prepend('<img class="board-image" src=' + response.data[0].image.url + ' />')
+            // console.log(response.data)
           }).fail(function(error){
             console.log(error)
           })
           // PDK.logout();
         }
       });
-      //end get board info
-      });
+    });
       //end login
   };
 
