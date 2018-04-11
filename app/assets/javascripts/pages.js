@@ -6,7 +6,7 @@ $(document).ready(function(){
 })
 
 var boardsListener = function() {
-  $('.my-md-3').on('click', '.board-items', function(){
+  $('.boards-container').on('click', '.board-items', function(){
     var clicked = $(this).closest('.board-items');
     var board_opacity = $('.board-items').css('opacity');
 
@@ -22,10 +22,10 @@ var boardsListener = function() {
 }
 
 var pinterestLogin = function(){
-  $('.pinterest-login').click(pintrest)
+  $('.pinterest-login').click(pinterest)
 }
 
-function pintrest(){
+function pinterest(){
   window.pAsyncInit = function() {
       PDK.init({
           appId: "4959715914598591625",
@@ -34,53 +34,24 @@ function pintrest(){
       //login
       PDK.login({ scope : 'read_relationships,read_public' }, function(response){
           if (!response || response.error) {
-            //  alert('Error occurred');
+             // alert('Error occurred');
           } else {
-             //console.log(JSON.stringify(response));
+             console.log('You are now logged in to your Pinterest account!');
           }
-      //get board info
-      PDK.me("pins", function(response){
-        console.log("pdk.me pins:", response)
+      // PDK.me("pins", function(response){
+      //   console.log("pdk.me pins:", response)
+      //
+      // })
 
-      })
 
+
+      //BOARDS REQUEST
       PDK.request('/v1/me/', function (response) {
         if (!response || response.error) {
-          alert('Error occured');
-        } else {
-          var total = 0;
-          var totalPrices = "";
-
-          $.ajax({
-            url: "https://api.pinterest.com/v1/me/pins/?access_token="+PDK.getSession().accessToken+"&fields=id,link,board,image,metadata"
-          }).done(function(response){
-
-            response.data.forEach(function(pin){
-              // console.log(pin);
-              try {
-                if(pin.metadata.product.offer.price) {
-                  var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
-                  // console.log(price);
-                  total += price
-                }
-              }
-              catch(err) {
-                // alert(err);
-              }
-            })
-            console.log(total);
-            totalPrices = "<div class='total-prices'>$" + total + "</div>"
-            $('.m-md-3').append(totalPrices);
-          })
-
-        }
-      })
-      PDK.request('/v1/me/', function (response) {
-        if (!response || response.error) {
-          alert('Error occurred');
+          // alert('Error occurred');
         } else {
           var boardItem = "";
-          console.log(response.data);
+          // console.log(response.data);
 
           $.ajax({
             url:  "https://api.pinterest.com/v1/me/boards/?access_token="+PDK.getSession().accessToken+"&fields=id,name,url,description,image"
@@ -92,36 +63,70 @@ function pintrest(){
               var url = board.url;
               var description = board.description;
               var image = board.image["60x60"].url;
-              var boardItemzz = "";
-              // console.log(id);
-              // console.log(name);
-              // console.log(url);
-              // console.log(description);
-              // console.log(image);
-              boardItem = "<div class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
+              var boardDiv = document.getElementsByClassName('my-md-3')
+              // console.log(boardDiv.childNodes.count)
+              boardItem = "<div id='" + id + "' class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
                                           + "<div class='my-3 p-3'>"
                                             + "<h2 class='display-5'>" + name + "</h2>"
+                                            + "<p>Total price for this board: $</p>"
                                             + "<p class='lead'>" + description + "</p>"
-                                          + "</div>"
-                                          + "<div class='image-div' style='width: 80%; height: 300px; border-radius: 21px 21px 0 0;'>"
-                                            + "<img class='board-image' src='" + image + "'/>"
-                                               // <a data-pin-do="embedBoard" data-pin-board-width="400" data-pin-scale-height="240" data-pin-scale-width="80" href="https://www.pinterest.com/petert0661/fly-fishing/"></a>
-                                            + "<a data-pin-do='embedBoard' data-pin-board-width='400' data-pin-scale-height='240' data-pin-scale-width='80' href='" + url + "'></a>"
                                           + "</div>"
                                         + "</div>";
 
-              boardItemzz = "<a data-pin-do='embedBoard' data-pin-board-width='400' data-pin-scale-height='240' data-pin-scale-width='80' href='" + url + "'></a>"
+              if(boardDiv.childElementCount < 2) {
+                $('.my-md-3').append(boardItem);
+              } else {
+                $('.boards-container').append("<div class='d-md-flex flex-md-equal w-100 my-md-3 pl-md-3'></div>").append(boardItem);
+              }
 
-              $('.my-md-3').append(boardItem);
-              $('#result').append(boardItemzz);
-            })
-            // console.log(response.data)
+            });
           }).fail(function(error){
             console.log(error)
-          })
+          });
           // PDK.logout();
         }
       });
+
+      //PINS REQUEST
+      // PDK.request('/v1/me/', function (response) {
+      //   if (!response || response.error) {
+      //     // alert('Error occured');
+      //   } else {
+      //     var total = 0;
+      //     var totalPrices = "";
+      //
+      //     $.ajax({
+      //       url: "https://api.pinterest.com/v1/me/pins/?access_token="+PDK.getSession().accessToken+"&fields=id,link,board,image,metadata"
+      //     }).done(function(response){
+      //       response.data.forEach(function(pin){
+      //         // console.log(pin);
+      //         var id = pin.id;
+      //         var link = pin.link;
+      //         var board = pin.board.id;
+      //         var image = pin.image.original.url;
+      //         var boardId = document.getElementById(board);
+      //
+      //         if(board == boardId.id){
+      //           $(boardId).append("<img src='" + image + "' height=90px width=90px />");
+      //         }
+      //
+      //         try {
+      //           if(pin.metadata.product.offer.price) {
+      //             var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
+      //             total += price
+      //           }
+      //         }
+      //         catch(err) {
+      //           // alert(err);
+      //         }
+      //       });
+      //       console.log(total);
+      //       totalPrices = "<div class='total-prices'>$" + total + "</div>"
+      //       $('.m-md-3').append(totalPrices);
+      //     });
+      //
+      //   }
+      // });
     });
       //end login
   };
