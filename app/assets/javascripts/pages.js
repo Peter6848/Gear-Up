@@ -8,7 +8,6 @@ $(document).ready(function(){
 var boardsListener = function() {
   $('.boards-container').on('click', '.board-items', function(){
     var clicked = $(this).closest('.board-items');
-    var board_opacity = $('.board-items').css('opacity');
 
     if($(clicked).hasClass('clicked')){
       $('.board-items').fadeIn();
@@ -63,21 +62,22 @@ function pinterest(){
               var url = board.url;
               var description = board.description;
               var image = board.image["60x60"].url;
-              var boardDiv = document.getElementsByClassName('my-md-3')
+              var boardDiv = document.getElementsByClassName('my-md-3');
+              var boardTotal = 0;
               // console.log(boardDiv.childNodes.count)
               boardItem = "<div id='" + id + "' class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
                                           + "<div class='my-3 p-3'>"
                                             + "<h2 class='display-5'>" + name + "</h2>"
-                                            + "<p>Total price for this board: $</p>"
+                                            + "<p class='board-total'>Total price for this board: $" + boardTotal + "</p>"
                                             + "<p class='lead'>" + description + "</p>"
                                           + "</div>"
                                         + "</div>";
 
-              if(boardDiv.childElementCount < 2) {
+              // if(boardDiv.childElementCount < 2) {
                 $('.my-md-3').append(boardItem);
-              } else {
-                $('.boards-container').append("<div class='d-md-flex flex-md-equal w-100 my-md-3 pl-md-3'></div>").append(boardItem);
-              }
+              // } else {
+              //   $('.boards-container').append("<div class='d-md-flex flex-md-equal w-100 my-md-3 pl-md-3'></div>").append(boardItem);
+              // }
 
             });
           }).fail(function(error){
@@ -87,46 +87,50 @@ function pinterest(){
         }
       });
 
-      //PINS REQUEST
-      // PDK.request('/v1/me/', function (response) {
-      //   if (!response || response.error) {
-      //     // alert('Error occured');
-      //   } else {
-      //     var total = 0;
-      //     var totalPrices = "";
-      //
-      //     $.ajax({
-      //       url: "https://api.pinterest.com/v1/me/pins/?access_token="+PDK.getSession().accessToken+"&fields=id,link,board,image,metadata"
-      //     }).done(function(response){
-      //       response.data.forEach(function(pin){
-      //         // console.log(pin);
-      //         var id = pin.id;
-      //         var link = pin.link;
-      //         var board = pin.board.id;
-      //         var image = pin.image.original.url;
-      //         var boardId = document.getElementById(board);
-      //
-      //         if(board == boardId.id){
-      //           $(boardId).append("<img src='" + image + "' height=90px width=90px />");
-      //         }
-      //
-      //         try {
-      //           if(pin.metadata.product.offer.price) {
-      //             var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
-      //             total += price
-      //           }
-      //         }
-      //         catch(err) {
-      //           // alert(err);
-      //         }
-      //       });
-      //       console.log(total);
-      //       totalPrices = "<div class='total-prices'>$" + total + "</div>"
-      //       $('.m-md-3').append(totalPrices);
-      //     });
-      //
-      //   }
-      // });
+      // PINS REQUEST
+      PDK.request('/v1/me/', function (response) {
+        if (!response || response.error) {
+          // alert('Error occured');
+        } else {
+          // var total = 0;
+          var totalPrices = "";
+
+          $.ajax({
+            url: "https://api.pinterest.com/v1/me/pins/?access_token="+PDK.getSession().accessToken+"&fields=id,link,board,image,metadata"
+          }).done(function(response){
+            var total = 0;
+            response.data.forEach(function(pin){
+              // console.log(pin);
+              var id = pin.id;
+              var link = pin.link;
+              var board = pin.board.id;
+              var image = pin.image.original.url;
+              var boardId = document.getElementById(board);
+
+
+              if(board == boardId.id){
+                $(boardId).append("<img src='" + image + "' height=90px width=90px />");
+
+                try {
+                  if(pin.metadata.product.offer.price) {
+                    var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
+                    boardTotal += price
+                    $('.boart-total').text(boardTotal += price);
+                  }
+                }
+                catch(err) {
+                  // alert(err);
+                }
+              }
+
+            });
+            console.log(total);
+            // totalPrices = "<div class='total-prices'>$" + total + "</div>"
+            // $('.board-total').append(totalPrices);
+          });
+
+        }
+      });
     });
       //end login
   };
