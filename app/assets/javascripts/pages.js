@@ -9,7 +9,7 @@ var boardsListener = function() {
   $('.boards-container').on('click', '.board-items', function(){
     var clicked = $(this).closest('.board-items');
 
-    if($(clicked).hasClass('clicked')){
+    if($(clicked).hasClass('clicked')) {
       $('.board-items').fadeIn();
       $(clicked).removeClass('clicked');
     } else {
@@ -30,27 +30,21 @@ function pinterest(){
           appId: "4959715914598591625",
           cookie: true
       });
-      //login
+      //LOGIN
       PDK.login({ scope : 'read_relationships,read_public' }, function(response){
-          if (!response || response.error) {
+          if(!response || response.error) {
              // alert('Error occurred');
           } else {
+             $('.pinterest-login').replaceWith('<a class=" pinterest-logout btn btn-outline-secondary" href="#">Logout Of Your Pinterest Account!</a>');
              console.log('You are now logged in to your Pinterest account!');
           }
-      // PDK.me("pins", function(response){
-      //   console.log("pdk.me pins:", response)
-      //
-      // })
-
-
 
       //BOARDS REQUEST
       PDK.request('/v1/me/', function (response) {
-        if (!response || response.error) {
+        if(!response || response.error) {
           // alert('Error occurred');
         } else {
           var boardItem = "";
-          // console.log(response.data);
 
           $.ajax({
             url:  "https://api.pinterest.com/v1/me/boards/?access_token="+PDK.getSession().accessToken+"&fields=id,name,url,description,image"
@@ -64,7 +58,7 @@ function pinterest(){
               var image = board.image["60x60"].url;
               var boardDiv = document.getElementsByClassName('my-md-3');
               var boardTotal = 0;
-              // console.log(boardDiv.childNodes.count)
+
               boardItem = "<div id='" + id + "' class='bg-light text-center mr-md-3 board-items pt-3 px-3 pt-md-5 px-md-5 text-centers'>"
                                           + "<div class='my-3 p-3'>"
                                             + "<h2 class='display-5'>" + name + "</h2>"
@@ -83,13 +77,13 @@ function pinterest(){
           }).fail(function(error){
             console.log(error)
           });
-          // PDK.logout();
+
         }
       });
 
       // PINS REQUEST
       PDK.request('/v1/me/', function (response) {
-        if (!response || response.error) {
+        if(!response || response.error) {
           // alert('Error occured');
         } else {
           // var total = 0;
@@ -114,8 +108,8 @@ function pinterest(){
                 try {
                   if(pin.metadata.product.offer.price) {
                     var price = parseFloat(pin.metadata.product.offer.price.replace(/\$|,/g, ''));
-                    boardTotal += price
-                    $('.boart-total').text(boardTotal += price);
+                    // boardTotal += price
+                    $('.board-total').text(boardTotal += price);
                   }
                 }
                 catch(err) {
@@ -128,11 +122,14 @@ function pinterest(){
             // totalPrices = "<div class='total-prices'>$" + total + "</div>"
             // $('.board-total').append(totalPrices);
           });
-
+            $('.pinterest-logout').on('click', function(){
+              PDK.logout();
+              $('.pinterest-logout').replaceWith('<a class=" pinterest-login btn btn-outline-secondary" href="#">Logoin To Your Pinterest Account!</a>');
+              alert('You are now logged out of Pinterest!');
+            })
         }
       });
     });
-      //end login
   };
 
   (function(d, s, id){
