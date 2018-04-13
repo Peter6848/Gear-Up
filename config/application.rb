@@ -27,5 +27,6 @@ module PinIt
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.web_console.whitelisted_ips = '192.168.0.0/16'
   end
 end
